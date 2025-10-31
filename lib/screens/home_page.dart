@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
+import 'Ver_Objetos_Screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +14,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Recüper Dashboard"), centerTitle: true),
-
       body: Row(
         children: [
           Expanded(
@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               color: Colors.grey[200],
               padding: const EdgeInsets.all(16.0),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -34,49 +33,56 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     },
-                    child: Text("Reportar Objeto Encontrado"),
+                    child: const Text("Reportar Objeto Encontrado"),
                   ),
-
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      //TODO
+                      // TODO: implementar pantalla para objeto perdido
                     },
-                    child: Text("Reportar Objeto Perdido"),
+                    child: const Text("Reportar Objeto Perdido"),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VerObjetosScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text("Ver Objetos"),
                   ),
                 ],
               ),
             ),
           ),
-
-          VerticalDivider(width: 2, color: Colors.black38),
+          const VerticalDivider(width: 2, color: Colors.black38),
           Expanded(
             flex: 3,
-
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Últimos Avisos",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: ListView.builder(
                       itemCount: 10,
-
                       itemBuilder: (context, index) {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),
                           child: ListTile(
                             title: Text("Objeto de prueba $index"),
-                            subtitle: Text(
+                            subtitle: const Text(
                               "Encontrado en Biblioteca - hace 5 min",
                             ),
-                            leading: Icon(Icons.pin_drop),
+                            leading: const Icon(Icons.pin_drop),
                           ),
                         );
                       },

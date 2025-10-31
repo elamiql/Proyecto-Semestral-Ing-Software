@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_semestral_ing_software/models/objeto_Encontrado.dart';
+import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
 
 class FormObjEncontrado extends StatefulWidget {
   const FormObjEncontrado({super.key});
@@ -125,4 +125,7 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
       ),
     );
   }
+
+
+  
 }
