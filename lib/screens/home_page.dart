@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 16),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 10,
+                      itemCount: 3,
                       itemBuilder: (context, index) {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),

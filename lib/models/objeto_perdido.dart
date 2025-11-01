@@ -8,6 +8,8 @@ class ObjetoPerdido extends Reporte {
     required super.ubicacion,
     required super.descripcion,
     required super.fechaReporte,
+    required super.horaDePerdida,
     required this.infoContacto,
+    super.imagenBytes,
   });
 }
