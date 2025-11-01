@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class VerObjetosScreen extends StatelessWidget {
   const VerObjetosScreen({super.key});
 
-  
   Widget buildObjetoCard({
     required String que,
     required String donde,
@@ -11,9 +10,7 @@ class VerObjetosScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 12.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,11 +20,17 @@ class VerObjetosScreen extends StatelessWidget {
             // Qué
             Row(
               children: [
-                const Icon(Icons.inventory_2_outlined, color: Colors.blueAccent),
+                const Icon(
+                  Icons.inventory_2_outlined,
+                  color: Colors.blueAccent,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Objeto: $que",
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
