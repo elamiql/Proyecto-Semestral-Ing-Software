@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Card(
                 elevation: 4.0,
-                margin: const EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(4.0),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -52,14 +52,24 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         },
-                        child: const Text("Reportar Objetos Encontrados"),
+                        child: const Text("Reportar Objeto Encontrado"),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: const Text("Reportar Objeto Perdido"),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          //TO DO
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VerObjetosScreen(),
+                            ),
+                          );
                         },
-                        child: const Text("Reportar Objetos Perdidos"),
+                        child: const Text("Ver Objetos"),
                       ),
                     ],
                   ),
@@ -75,19 +85,14 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
-                    child: Text(
-                      "Últimos Avisos",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  const Text(
+                    "Últimos Avisos",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 3,
+                      itemCount: 10,
                       itemBuilder: (context, index) {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12.0),
