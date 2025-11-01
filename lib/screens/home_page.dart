@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
-import 'ver_objetos_screen.dart';
+import 'Ver_Objetos_Screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

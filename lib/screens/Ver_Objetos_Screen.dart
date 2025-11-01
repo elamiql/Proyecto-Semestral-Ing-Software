@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
+import 'package:proyecto_semestral_ing_software/models/reporte.dart';
+import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
 
 class VerObjetosScreen extends StatelessWidget {
   const VerObjetosScreen({super.key});
@@ -10,33 +14,26 @@ class VerObjetosScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       margin: const EdgeInsets.only(bottom: 12.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Qué
             Row(
               children: [
-                const Icon(
-                  Icons.inventory_2_outlined,
-                  color: Colors.blueAccent,
-                ),
+                const Icon(Icons.inventory_2_outlined, color: Colors.blueAccent),
                 const SizedBox(width: 8),
                 Text(
                   "Objeto: $que",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-
-            // Dónde
             Row(
               children: [
                 const Icon(Icons.place_outlined, color: Colors.green),
@@ -48,8 +45,6 @@ class VerObjetosScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-
-            // Reclamar
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -71,6 +66,9 @@ class VerObjetosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final objetosProvider = Provider.of<ObjetosProvider>(context);
+    final objetos = objetosProvider.objetos;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Objetos Reportados"),
@@ -78,36 +76,31 @@ class VerObjetosScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Lista de objetos encontrados",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
+        child: objetos.isEmpty
+            ? const Center(
+                child: Text(
+                  "No hay objetos registrados aún.",
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+              )
+            : ListView.builder(
+                itemCount: objetos.length,
+                itemBuilder: (context, index) {
+                  final obj = objetos[index];
 
-            // 🔹 Ejemplo de uso del método (por ahora estático)
-            buildObjetoCard(
-              que: "Mochila Negra",
-              donde: "Biblioteca Central",
-              reclamar: "Oficina de objetos perdidos (Edificio A, piso 1)",
-            ),
-            buildObjetoCard(
-              que: "Paraguas Azul",
-              donde: "Cafetería del Campus",
-              reclamar: "Mostrador de información principal",
-            ),
+                  // Detectar tipo de reporte
+                  String reclamar = "Desconocido";
+                  if (obj is ObjetoEncontrado) {
+                    reclamar = obj.dondeReclamar;
+                  }
 
-            const SizedBox(height: 20),
-            const Center(
-              child: Text(
-                "Próximamente se mostrarán todos los objetos registrados...",
-                style: TextStyle(fontSize: 15, color: Colors.black54),
+                  return buildObjetoCard(
+                    que: obj.titulo,
+                    donde: obj.ubicacion,
+                    reclamar: reclamar,
+                  );
+                },
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
