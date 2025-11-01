@@ -8,11 +8,14 @@ class FormObjEncontrado extends StatefulWidget {
   State<FormObjEncontrado> createState() => _FormObjEncontradoState();
 }
 
+//agregar hora de perdida
+
 class _FormObjEncontradoState extends State<FormObjEncontrado> {
   final _tituloController = TextEditingController();
   final _ubicacionController = TextEditingController();
   final _descripcionController = TextEditingController();
   final _contactoController = TextEditingController();
+  late List<ObjetoEncontrado> objetos;
 
   @override
   void dispose() {
@@ -101,6 +104,8 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
                       dondeReclamar: ubicacionDeReclamo,
                     );
 
+                    objetos.add(nuevoReporte);
+                    
                     _tituloController.clear();
                     _ubicacionController.clear();
                     _descripcionController.clear();
