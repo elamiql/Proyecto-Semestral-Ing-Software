@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_perdido.dart';
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
-import 'package:proyecto_semestral_ing_software/models/reporte.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
 
 class VerObjetosScreen extends StatelessWidget {
@@ -17,9 +16,7 @@ class VerObjetosScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 12.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,11 +25,17 @@ class VerObjetosScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.inventory_2_outlined, color: Colors.blueAccent),
+                const Icon(
+                  Icons.inventory_2_outlined,
+                  color: Colors.blueAccent,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Objeto: $que",
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -99,7 +102,7 @@ class VerObjetosScreen extends StatelessWidget {
                     dondeLabel = "Encontrado en";
                     infoLabel = "Reclamar en";
                     info = obj.dondeReclamar;
-                  } else if(obj is ObjetoPerdido) {
+                  } else if (obj is ObjetoPerdido) {
                     dondeLabel = "Perdido en";
                     infoLabel = "Informacion de contacto";
                     info = obj.infoContacto;
