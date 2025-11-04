@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
+import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 import 'Ver_Objetos_Screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,7 +57,14 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FormObjPerdido(),
+                              ),
+                          );
+                        },
                         child: const Text("Reportar Objeto Perdido"),
                       ),
                       const SizedBox(height: 16),

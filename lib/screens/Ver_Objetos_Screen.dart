@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:proyecto_semestral_ing_software/models/objeto_perdido.dart';
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
 import 'package:proyecto_semestral_ing_software/models/reporte.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
@@ -9,8 +10,10 @@ class VerObjetosScreen extends StatelessWidget {
 
   Widget buildObjetoCard({
     required String que,
+    required String dondeLabel,
     required String donde,
-    required String reclamar,
+    required String infoLabel,
+    required String info,
   }) {
     return Card(
       elevation: 3,
@@ -39,7 +42,7 @@ class VerObjetosScreen extends StatelessWidget {
                 const Icon(Icons.place_outlined, color: Colors.green),
                 const SizedBox(width: 8),
                 Text(
-                  "Encontrado en: $donde",
+                  "$dondeLabel: $donde",
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
@@ -52,7 +55,7 @@ class VerObjetosScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "Reclamar en: $reclamar",
+                    "$infoLabel : $info",
                     style: const TextStyle(fontSize: 15),
                   ),
                 ),
@@ -89,15 +92,28 @@ class VerObjetosScreen extends StatelessWidget {
                   final obj = objetos[index];
 
                   // Detectar tipo de reporte
-                  String reclamar = "Desconocido";
+                  String dondeLabel;
+                  String infoLabel;
+                  String info;
                   if (obj is ObjetoEncontrado) {
-                    reclamar = obj.dondeReclamar;
+                    dondeLabel = "Encontrado en";
+                    infoLabel = "Reclamar en";
+                    info = obj.dondeReclamar;
+                  } else if(obj is ObjetoPerdido) {
+                    dondeLabel = "Perdido en";
+                    infoLabel = "Informacion de contacto";
+                    info = obj.infoContacto;
+                  } else {
+                    dondeLabel = "Ubicacion";
+                    infoLabel = "informacion";
+                    info = "no disponible";
                   }
-
                   return buildObjetoCard(
                     que: obj.titulo,
+                    dondeLabel: dondeLabel,
                     donde: obj.ubicacion,
-                    reclamar: reclamar,
+                    infoLabel: infoLabel,
+                    info: info,
                   );
                 },
               ),
