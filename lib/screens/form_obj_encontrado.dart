@@ -176,6 +176,7 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
                 onPressed: _enviarReporte,
                 child: Text("Enviar Reporte de hallazgo"),
               ),
+              SizedBox(height: 24),
             ],
           ),
         ),

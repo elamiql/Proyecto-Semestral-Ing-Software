@@ -158,8 +158,8 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
 
                 child: _imagenBytes == null
                     ? const Center(
-                  child: Text("Aún no has seleccionado una imagen."),
-                )
+                        child: Text("Aún no has seleccionado una imagen."),
+                      )
                     : Image.memory(_imagenBytes!, fit: BoxFit.contain),
               ),
 
@@ -176,6 +176,7 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
                 onPressed: _enviarReporte,
                 child: Text("Enviar Reporte de perdida"),
               ),
+              SizedBox(height: 24),
             ],
           ),
         ),
