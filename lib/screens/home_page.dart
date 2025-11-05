@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+// --- AÑADIDOS ---
+import 'package:provider/provider.dart';
+import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
+// Asegúrate de que esta ruta sea correcta
+import 'package:proyecto_semestral_ing_software/widgets/objeto_card.dart';
+// --- FIN AÑADIDOS ---
+
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 import 'ver_objetos_screen.dart';
@@ -13,6 +20,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final objetosProvider = Provider.of<ObjetosProvider>(context);
+    final todosLosObjetos = objetosProvider.objetos;
+    final ultimosObjetos = todosLosObjetos.reversed.take(3).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -59,10 +70,10 @@ class _HomePageState extends State<HomePage> {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FormObjPerdido(),
-                              ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FormObjPerdido(),
+                            ),
                           );
                         },
                         child: const Text("Reportar Objeto Perdido"),
@@ -98,22 +109,27 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
+
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12.0),
-                          child: ListTile(
-                            title: Text("Objeto de prueba $index"),
-                            subtitle: const Text(
-                              "Encontrado en Biblioteca - hace 5 min",
+                    child: ultimosObjetos.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No hay avisos recientes.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
                             ),
-                            leading: const Icon(Icons.pin_drop),
+                          )
+                        : ListView.builder(
+                            itemCount:
+                                ultimosObjetos.length,
+                            itemBuilder: (context, index) {
+                              final obj = ultimosObjetos[index];
+
+                              return ObjetoCard(obj: obj);
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ],
               ),
