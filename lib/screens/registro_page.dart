@@ -202,6 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
             const SizedBox(height: 16),
 

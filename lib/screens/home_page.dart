@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
+import 'package:proyecto_semestral_ing_software/screens/perfil_screen.dart';
 import 'package:proyecto_semestral_ing_software/widgets/objeto_card.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
@@ -49,11 +50,18 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         title: const Text(
           "Recüper",
-          style: TextStyle(color: Colors.white70, fontSize: 20),
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 57, 102),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle, color: Colors.white),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PerfilScreen()),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {

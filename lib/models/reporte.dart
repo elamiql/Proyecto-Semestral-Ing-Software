@@ -8,6 +8,8 @@ abstract class Reporte {
   DateTime fechaReporte;
   String horaDePerdida;
   Uint8List? imagenBytes;
+  String correoUsuario;
+  String categoria;
 
   Reporte({
     required this.id,
@@ -16,6 +18,8 @@ abstract class Reporte {
     required this.descripcion,
     required this.fechaReporte,
     required this.horaDePerdida,
-    this.imagenBytes
+    required this.correoUsuario,
+    required this.categoria,
+    this.imagenBytes,
   });
 }

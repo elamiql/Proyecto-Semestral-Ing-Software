@@ -9,6 +9,8 @@ class ObjetoPerdido extends Reporte {
     required super.descripcion,
     required super.fechaReporte,
     required super.horaDePerdida,
+    required super.correoUsuario,
+    required super.categoria,
     required this.infoContacto,
     super.imagenBytes,
   });
