@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
-
 import 'package:proyecto_semestral_ing_software/widgets/objeto_card.dart';
-
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 import 'ver_objetos_screen.dart';
-import 'login_page.dart'; 
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,18 +37,16 @@ class _HomePageState extends State<HomePage> {
     final auth = Provider.of<AuthProvider>(context);
 
     if (auth.correo == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final objetosProvider = Provider.of<ObjetosProvider>(context);
     final todosLosObjetos = objetosProvider.objetos;
     final ultimosObjetos = todosLosObjetos.reversed.take(3).toList();
 
-    
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           "Recüper",
           style: TextStyle(color: Colors.white70, fontSize: 20),
@@ -62,9 +57,54 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false).logout();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('¿Salir de tu cuenta?'),
+                    content: const Text('Tendrás que volver a iniciar sesión'),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await Provider.of<AuthProvider>(
+                            context,
+                            listen: false,
+                          ).logout();
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text(
+                          'Salir',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
-          )
+            color: Colors.white,
+          ),
         ],
       ),
       body: Row(
