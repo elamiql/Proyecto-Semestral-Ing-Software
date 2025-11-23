@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_semestral_ing_software/models/reporte.dart'; // Asegúrate de importar esto
+import 'package:proyecto_semestral_ing_software/models/reporte.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_perdido.dart';
-import 'package:proyecto_semestral_ing_software/screens/detalle_objeto_screen.dart'; // Importamos la nueva pantalla
+import 'package:proyecto_semestral_ing_software/screens/detalle_objeto_screen.dart';
 
 class ObjetoCard extends StatelessWidget {
-  // Cambié dynamic a Reporte para que sea compatible con la pantalla de detalle, 
-  // pero la lógica sigue igual.
   final Reporte obj; 
 
   const ObjetoCard({super.key, required this.obj});
@@ -20,7 +18,6 @@ class ObjetoCard extends StatelessWidget {
     if (obj is ObjetoEncontrado) {
       dondeLabel = "Encontrado en";
       infoLabel = "Reclamar en";
-      // Hacemos cast para acceder a las propiedades específicas
       info = (obj as ObjetoEncontrado).dondeReclamar; 
     } else if (obj is ObjetoPerdido) {
       dondeLabel = "Perdido en";
@@ -36,11 +33,9 @@ class ObjetoCard extends StatelessWidget {
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 12.0),
-      // AQUÍ ESTÁ EL CAMBIO: Usamos InkWell para el clic
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Al hacer clic, nos vamos a la pantalla de detalle
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -60,7 +55,7 @@ class ObjetoCard extends StatelessWidget {
                     color: Colors.blueAccent,
                   ),
                   const SizedBox(width: 8),
-                  Expanded( // Agregué Expanded para evitar overflow si el título es largo
+                  Expanded(
                     child: Text(
                       "Objeto: ${obj.titulo}",
                       style: const TextStyle(
@@ -93,7 +88,7 @@ class ObjetoCard extends StatelessWidget {
                     child: Text(
                       "$infoLabel : $info",
                       style: const TextStyle(fontSize: 15),
-                      maxLines: 2, // Limite para que no rompa el diseño
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
