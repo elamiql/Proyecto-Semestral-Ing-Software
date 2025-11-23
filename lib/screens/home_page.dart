@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-// --- AÑADIDOS ---
 import 'package:provider/provider.dart';
+
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
-// Asegúrate de que esta ruta sea correcta
+import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
+
 import 'package:proyecto_semestral_ing_software/widgets/objeto_card.dart';
-// --- FIN AÑADIDOS ---
 
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 import 'ver_objetos_screen.dart';
+import 'login_page.dart'; // <-- IMPORTANTE
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,11 +20,38 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final auth = Provider.of<AuthProvider>(context);
+
+    if (auth.correo == null) {
+      // Si NO está logeado → ir al login
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+
+    // Mientras redirige, mostrar pantalla vacía
+    if (auth.correo == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final objetosProvider = Provider.of<ObjetosProvider>(context);
     final todosLosObjetos = objetosProvider.objetos;
     final ultimosObjetos = todosLosObjetos.reversed.take(3).toList();
 
+    // --- TODO TU CÓDIGO ORIGINAL DE LA HOME ---
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -32,6 +60,14 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 57, 102),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              Provider.of<AuthProvider>(context, listen: false).logout();
+            },
+          )
+        ],
       ),
       body: Row(
         children: [
@@ -109,7 +145,6 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-
                   Expanded(
                     child: ultimosObjetos.isEmpty
                         ? const Center(
@@ -122,11 +157,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount:
-                                ultimosObjetos.length,
+                            itemCount: ultimosObjetos.length,
                             itemBuilder: (context, index) {
                               final obj = ultimosObjetos[index];
-
                               return ObjetoCard(obj: obj);
                             },
                           ),
