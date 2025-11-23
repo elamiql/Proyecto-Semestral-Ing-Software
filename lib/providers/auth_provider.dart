@@ -9,7 +9,7 @@ class AuthProvider with ChangeNotifier {
   String? get correo => _correo;
   bool get autenticado => _autenticado;
 
-  // Cargar datos al iniciar app
+
   Future<void> cargarEstado() async {
     final prefs = await SharedPreferences.getInstance();
     _correo = prefs.getString('correo');
@@ -17,29 +17,35 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> registrarUsuario({
+  Future<bool> registrarUsuario({
   required String correo,
   required String nombre,
   required String matricula,
   required String telefono,
 }) async {
+  
+  if (!correo.endsWith("@udec.cl")) {
+    return false;  
+  }
+
   final prefs = await SharedPreferences.getInstance();
 
-  // Guardamos información del usuario
   await prefs.setString('correo', correo);
   await prefs.setString('nombre', nombre);
   await prefs.setString('matricula', matricula);
   await prefs.setString('telefono', telefono);
 
-  // ❗ NO loguear aquí
-  _correo = null;
+  _correo = correo;
   _autenticado = false;
-
   notifyListeners();
+
+  return true;
 }
 
 
-  // Login simple con correo
+
+
+  
   Future<bool> login(String correo) async {
     final prefs = await SharedPreferences.getInstance();
     final registrado = prefs.getString('correo');
@@ -54,7 +60,7 @@ class AuthProvider with ChangeNotifier {
     return false;
   }
 
-  // Logout
+
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

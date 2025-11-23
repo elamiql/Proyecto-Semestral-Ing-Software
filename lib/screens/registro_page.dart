@@ -25,15 +25,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
-            TextField(decoration: const InputDecoration(labelText: "Correo"), controller: correo),
-            TextField(decoration: const InputDecoration(labelText: "Nombre Completo"), controller: nombre),
-            TextField(decoration: const InputDecoration(labelText: "Matrícula"), controller: matricula),
-            TextField(decoration: const InputDecoration(labelText: "Teléfono"), controller: telefono),
+            TextField(
+              decoration: const InputDecoration(labelText: "Correo UdeC"),
+              controller: correo,
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: "Nombre Completo"),
+              controller: nombre,
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: "Matrícula"),
+              controller: matricula,
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: "Teléfono"),
+              controller: telefono,
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                final email = correo.text.trim();
+
+      
+                if (!email.endsWith("@udec.cl")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content:
+                          Text("Debes registrarte con un correo @udec.cl"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return; 
+                }
+
                 await auth.registrarUsuario(
-                  correo: correo.text.trim(),
+                  correo: email,
                   nombre: nombre.text.trim(),
                   matricula: matricula.text.trim(),
                   telefono: telefono.text.trim(),
@@ -48,4 +74,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

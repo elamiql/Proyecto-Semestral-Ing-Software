@@ -9,7 +9,7 @@ import 'package:proyecto_semestral_ing_software/widgets/objeto_card.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 import 'ver_objetos_screen.dart';
-import 'login_page.dart'; // <-- IMPORTANTE
+import 'login_page.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     final auth = Provider.of<AuthProvider>(context);
 
     if (auth.correo == null) {
-      // Si NO está logeado → ir al login
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
           context,
@@ -40,7 +39,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
 
-    // Mientras redirige, mostrar pantalla vacía
     if (auth.correo == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -51,7 +49,7 @@ class _HomePageState extends State<HomePage> {
     final todosLosObjetos = objetosProvider.objetos;
     final ultimosObjetos = todosLosObjetos.reversed.take(3).toList();
 
-    // --- TODO TU CÓDIGO ORIGINAL DE LA HOME ---
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
