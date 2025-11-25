@@ -137,18 +137,20 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FormObjEncontrado(),
-                            ),
-                          );
-                        },
-                        child: const Text("Reportar Objeto Encontrado"),
-                      ),
-                      const SizedBox(height: 16),
+                      if (auth.esAdmin) ...[
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FormObjEncontrado(),
+                              ),
+                            );
+                          },
+                          child: const Text("Reportar Objeto Encontrado"),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(

@@ -11,7 +11,8 @@ import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart';
 import 'package:proyecto_semestral_ing_software/utils/form_utils.dart';
 
 class FormObjEncontrado extends StatefulWidget {
-  const FormObjEncontrado({super.key});
+  final ObjetoEncontrado? objetoEditar;
+  const FormObjEncontrado({super.key, this.objetoEditar});
   @override
   State<FormObjEncontrado> createState() => _FormObjEncontradoState();
 }
@@ -26,6 +27,21 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
   Uint8List? _imagenBytes;
   String? _categoriaSel;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.objetoEditar != null) {
+      final obj = widget.objetoEditar!;
+      _tituloCtrl.text = obj.titulo;
+      _ubicacionCtrl.text = obj.ubicacion;
+      _descCtrl.text = obj.descripcion;
+      _dondeReclamarCtrl.text = obj.dondeReclamar;
+      _horaCtrl.text = obj.horaDePerdida;
+      _categoriaSel = obj.categoria;
+      _imagenBytes = obj.imagenBytes;
+    }
+  }
 
   Future<void> _pickImage() async {
     final XFile? img = await _picker.pickImage(source: ImageSource.gallery);
@@ -56,31 +72,48 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
     }
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
+    final esEdicion = widget.objetoEditar != null;
+
     final nuevo = ObjetoEncontrado(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: esEdicion
+          ? widget.objetoEditar!.id
+          : DateTime.now().millisecondsSinceEpoch.toString(),
       titulo: _tituloCtrl.text,
       ubicacion: _ubicacionCtrl.text,
       descripcion: _descCtrl.text,
-      fechaReporte: DateTime.now(),
+      fechaReporte: esEdicion
+          ? widget.objetoEditar!.fechaReporte
+          : DateTime.now(),
       horaDePerdida: _horaCtrl.text,
-      correoUsuario: auth.correo ?? '',
+      correoUsuario: esEdicion
+          ? widget.objetoEditar!.correoUsuario
+          : (auth.correo ?? ''),
       categoria: _categoriaSel!,
       dondeReclamar: _dondeReclamarCtrl.text,
       imagenBytes: _imagenBytes,
     );
 
-    Provider.of<ObjetosProvider>(context, listen: false).agregarObjeto(nuevo);
-    FormUtils.showSnackBar(context, "Hallazgo reportado con éxito");
+    final provider = Provider.of<ObjetosProvider>(context, listen: false);
+
+    if (esEdicion) {
+      provider.editarObjeto(nuevo);
+      FormUtils.showSnackBar(context, "Hallazgo actualizado correctamente");
+    } else {
+      provider.agregarObjeto(nuevo);
+      FormUtils.showSnackBar(context, "Hallazgo reportado con éxito");
+    }
+
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final esEdicion = widget.objetoEditar != null;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Reportar Hallazgo",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          esEdicion ? "Editar Hallazgo" : "Reportar Hallazgo",
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppTheme.primary,
@@ -92,7 +125,7 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildAlertBanner(),
+              if (!esEdicion) _buildAlertBanner(),
               const SizedBox(height: 20),
 
               DropdownButtonFormField<String>(
@@ -173,9 +206,9 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "PUBLICAR HALLAZGO",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  esEdicion ? "GUARDAR CAMBIOS" : "PUBLICAR HALLAZGO",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

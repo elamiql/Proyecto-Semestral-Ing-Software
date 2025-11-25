@@ -1,16 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
+import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
 import 'package:proyecto_semestral_ing_software/models/reporte.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_perdido.dart';
 import 'package:proyecto_semestral_ing_software/models/objeto_encontrado.dart';
 import 'package:proyecto_semestral_ing_software/screens/fullscreen_image.dart';
+import 'package:proyecto_semestral_ing_software/screens/form_obj_encontrado.dart';
+import 'package:proyecto_semestral_ing_software/screens/form_obj_perdido.dart';
 
 class DetalleObjetoScreen extends StatelessWidget {
   final Reporte objeto;
 
   const DetalleObjetoScreen({super.key, required this.objeto});
 
+  void _confirmarEliminacion(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Eliminar publicación?'),
+        content: const Text(
+          'Esta acción no se puede deshacer. ¿Estás seguro de que quieres eliminar este objeto?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              Provider.of<ObjetosProvider>(context, listen: false)
+                  .eliminarObjeto(objeto);
+              Navigator.of(ctx).pop();
+
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Publicación eliminada correctamente')),
+              );
+            },
+            child: const Text('Eliminar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+    final esDueno = auth.correo != null && auth.correo == objeto.correoUsuario;
+    final tienePermiso = auth.esAdmin || esDueno;
     final esPerdido = objeto is ObjetoPerdido;
     final colorTema = esPerdido ? Colors.red : Colors.green;
     final tituloAppBar = esPerdido ? "Detalle Pérdida" : "Detalle Hallazgo";
@@ -31,6 +72,39 @@ class DetalleObjetoScreen extends StatelessWidget {
         title: Text(tituloAppBar),
         backgroundColor: colorTema,
         foregroundColor: Colors.white,
+        actions: [
+          if (tienePermiso)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: 'Modificar Objeto',
+              onPressed: () {
+                if (esPerdido) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FormObjPerdido(
+                          objetoEditar: objeto as ObjetoPerdido
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FormObjEncontrado(
+                          objetoEditar: objeto as ObjetoEncontrado
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            tooltip: 'Eliminar',
+            onPressed: () => _confirmarEliminacion(context),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

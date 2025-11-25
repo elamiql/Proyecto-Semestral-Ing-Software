@@ -12,7 +12,8 @@ import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart';
 import 'package:proyecto_semestral_ing_software/utils/form_utils.dart';
 
 class FormObjPerdido extends StatefulWidget {
-  const FormObjPerdido({super.key});
+  final ObjetoPerdido? objetoEditar;
+  const FormObjPerdido({super.key, this.objetoEditar});
   @override
   State<FormObjPerdido> createState() => _FormObjPerdidoState();
 }
@@ -27,6 +28,21 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
   Uint8List? _imagenBytes;
   String? _categoriaSel;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.objetoEditar != null) {
+      final obj = widget.objetoEditar!;
+      _tituloCtrl.text = obj.titulo;
+      _ubicacionCtrl.text = obj.ubicacion;
+      _descCtrl.text = obj.descripcion;
+      _contactoCtrl.text = obj.infoContacto;
+      _horaCtrl.text = obj.horaDePerdida;
+      _categoriaSel = obj.categoria;
+      _imagenBytes = obj.imagenBytes;
+    }
+  }
 
   Future<void> _pickImage() async {
     final XFile? img = await _picker.pickImage(source: ImageSource.gallery);
@@ -55,31 +71,47 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
     }
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
-    final nuevo = ObjetoPerdido(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    final esEdicion = widget.objetoEditar != null;
+
+    final objeto = ObjetoPerdido(
+      id: esEdicion
+          ? widget.objetoEditar!.id
+          : DateTime.now().millisecondsSinceEpoch.toString(),
       titulo: _tituloCtrl.text,
       ubicacion: _ubicacionCtrl.text,
       descripcion: _descCtrl.text,
-      fechaReporte: DateTime.now(),
+      fechaReporte:
+      esEdicion ? widget.objetoEditar!.fechaReporte : DateTime.now(),
       horaDePerdida: _horaCtrl.text,
-      correoUsuario: auth.correo ?? '',
+      correoUsuario:
+      esEdicion ? widget.objetoEditar!.correoUsuario : (auth.correo ?? ''),
       categoria: _categoriaSel!,
       infoContacto: _contactoCtrl.text,
       imagenBytes: _imagenBytes,
     );
 
-    Provider.of<ObjetosProvider>(context, listen: false).agregarObjeto(nuevo);
-    FormUtils.showSnackBar(context, "Pérdida reportada con éxito");
+    final provider = Provider.of<ObjetosProvider>(context, listen: false);
+
+    if (esEdicion) {
+      provider.editarObjeto(objeto);
+      FormUtils.showSnackBar(context, "Objeto actualizado correctamente");
+    } else {
+      provider.agregarObjeto(objeto);
+      FormUtils.showSnackBar(context, "Pérdida reportada con éxito");
+    }
+
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final esEdicion = widget.objetoEditar != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Reportar Pérdida",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          esEdicion ? "Editar Pérdida" : "Reportar Pérdida",
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppTheme.primary,
@@ -91,7 +123,7 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildAlertBanner(),
+              if (!esEdicion) _buildAlertBanner(),
               const SizedBox(height: 20),
 
               DropdownButtonFormField<String>(
@@ -179,9 +211,10 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "PUBLICAR PÉRDIDA",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  esEdicion ? "GUARDAR CAMBIOS" : "PUBLICAR PÉRDIDA",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

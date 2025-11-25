@@ -188,4 +188,16 @@ class ObjetosProvider with ChangeNotifier {
     _objetos.remove(objeto);
     notifyListeners();
   }
+
+  void editarObjeto(Reporte objetoEditado) {
+    final index = _objetos.indexWhere((obj) => obj.id == objetoEditado.id);
+
+    if (index != -1) {
+      _objetos[index] = objetoEditado;
+      notifyListeners();
+    } else {
+      print("Error: No se encontró el objeto con id ${objetoEditado
+          .id} para editar.");
+    }
+  }
 }
