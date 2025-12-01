@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final objetosProvider = Provider.of<ObjetosProvider>(context);
-    final todosLosObjetos = objetosProvider.objetos;
+    final todosLosObjetos = objetosProvider.objetosVisibles;
     final ultimosObjetos = todosLosObjetos.reversed.take(3).toList();
 
     return Scaffold(

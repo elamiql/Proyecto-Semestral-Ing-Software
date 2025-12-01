@@ -13,5 +13,6 @@ class ObjetoEncontrado extends Reporte {
     required super.categoria,
     required this.dondeReclamar,
     super.imagenBytes,
+    super.estado = 'ABIERTO',
   });
 }

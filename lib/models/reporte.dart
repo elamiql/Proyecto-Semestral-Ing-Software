@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 abstract class Reporte {
   String id;
+  String estado;
   String titulo;
   String ubicacion;
   String descripcion;
@@ -21,5 +22,6 @@ abstract class Reporte {
     required this.correoUsuario,
     required this.categoria,
     this.imagenBytes,
+    this.estado = 'ABIERTO',
   });
 }

@@ -200,4 +200,52 @@ class ObjetosProvider with ChangeNotifier {
           .id} para editar.");
     }
   }
+
+  Reporte? obtenerObjetoPorId(String id) {
+    try {
+      return _objetos.firstWhere((obj) => obj.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void vincularObjetos(String idPerdido, String idEncontrado) {
+    final index = _objetos.indexWhere((obj) => obj.id == idPerdido);
+
+    if (index != -1 && _objetos[index] is ObjetoPerdido) {
+      final objActual = _objetos[index] as ObjetoPerdido;
+      objActual.idObjetoVinculado = idEncontrado;
+
+      notifyListeners();
+    }
+  }
+
+  List<Reporte> get objetosVisibles {
+    return _objetos.where((obj) => obj.estado != 'ARCHIVADO').toList();
+  }
+
+  void cambiarEstado(String id, String nuevoEstado) {
+    final index = _objetos.indexWhere((obj) => obj.id == id);
+    if (index != -1) {
+      _objetos[index].estado = nuevoEstado;
+      notifyListeners();
+    }
+  }
+
+  void marcarComoResuelto(String id) {
+    cambiarEstado(id, 'RESUELTO');
+  }
+
+  void archivarObjeto(String id) {
+    cambiarEstado(id, 'ARCHIVADO');
+    final index = _objetos.indexWhere((obj) => obj.id == id);
+
+    if (index != -1) {
+      final obj = _objetos[index];
+      if (obj is ObjetoPerdido && obj.idObjetoVinculado != null) {
+        cambiarEstado(obj.idObjetoVinculado!, 'ARCHIVADO');
+        print("Se ha archivado automáticamente el objeto vinculado: ${obj.idObjetoVinculado}");
+      }
+    }
+  }
 }
