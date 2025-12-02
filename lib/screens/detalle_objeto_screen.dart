@@ -30,7 +30,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     super.dispose();
   }
 
-  // --- LÓGICA DE PERMISOS ---
   bool _esCreador(AuthProvider auth) =>
       widget.objeto.correoUsuario == auth.correo;
   bool _esAdmin(AuthProvider auth) => auth.esAdmin;
@@ -51,7 +50,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     return (_esCreador(auth) || _esAdmin(auth)) && !estaCerrado;
   }
 
-  // --- UTILIDADES ---
+
   String _formatearFechaHora() {
     return DateFormat('dd/MM/yyyy - HH:mm').format(widget.objeto.fechaReporte);
   }
@@ -65,7 +64,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     return 'No disponible';
   }
 
-  // --- ACCIONES ---
+
   void _ampliarImagen(BuildContext context, int index) {
     Navigator.push(
       context,
@@ -116,15 +115,12 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     }
   }
 
-  // --- LÓGICA DE MATCH (VINCULAR) ---
+
   void _mostrarDialogoMatch() {
     final provider = Provider.of<ObjetosProvider>(context, listen: false);
-
-    // 1. Determinar qué buscar (lo opuesto a lo que estamos viendo)
     final esPerdido = widget.objeto is ObjetoPerdido;
 
     final candidatos = provider.objetosVisibles.where((obj) {
-      // Si estamos viendo un PERDIDO, buscamos ENCONTRADOS (y viceversa)
       return esPerdido ? (obj is ObjetoEncontrado) : (obj is ObjetoPerdido);
     }).toList();
 
@@ -175,11 +171,9 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                       ),
                       subtitle: Text(
                         DateFormat('dd/MM/yyyy').format(candidato.fechaReporte),
-                        style: const TextStyle(fontSize: 12),
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
-                        // 2. Realizar la vinculación
                         if (esPerdido) {
                           provider.vincularObjetos(
                             widget.objeto.id,
@@ -191,12 +185,10 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                             widget.objeto.id,
                           );
                         }
-
                         Navigator.pop(ctx);
                         setState(
                           () {},
-                        ); // Actualizamos la pantalla para ver el banner
-
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
@@ -235,7 +227,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),
             onPressed: () {
@@ -248,12 +240,92 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Reporte cerrado correctamente'),
-                  backgroundColor: Colors.green,
+                  content: Text('Reporte cerrado'),
+                  backgroundColor: Colors.orange,
                 ),
               );
             },
             child: const Text('Cerrar Reporte'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmarArchivar() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Archivar Objeto?'),
+        content: const Text(
+          'Se moverá al archivo histórico y saldrá de la lista principal.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              final provider = Provider.of<ObjetosProvider>(
+                context,
+                listen: false,
+              );
+              provider.archivarObjeto(widget.objeto.id);
+              Navigator.pop(ctx);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Objeto archivado'),
+                  backgroundColor: Colors.grey,
+                ),
+              );
+            },
+            child: const Text('Archivar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmarEliminar() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Eliminar permanentemente?'),
+        content: const Text(
+          'Esta acción NO se puede deshacer. El registro se borrará de la base de datos.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              final provider = Provider.of<ObjetosProvider>(
+                context,
+                listen: false,
+              );
+              provider.eliminarObjeto(widget.objeto);
+              Navigator.pop(ctx);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Objeto eliminado'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+            child: const Text('Eliminar'),
           ),
         ],
       ),
@@ -319,7 +391,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         actions: [
-          // 1. Botón MATCH (Solo Admin y si está activo)
           if (_esAdmin(auth) && !estaCerrado)
             IconButton(
               icon: const Icon(Icons.link),
@@ -327,7 +398,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               onPressed: _mostrarDialogoMatch,
             ),
 
-          // 2. Botón Editar
           if (_puedeEditar(auth))
             IconButton(
               icon: const Icon(Icons.edit),
@@ -335,7 +405,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               onPressed: _navegarAEdicion,
             ),
 
-          // 3. Botón Entregado (Solo Admin)
           if (_puedeMarcarEntregado(auth))
             IconButton(
               icon: const Icon(Icons.check_circle_outline),
@@ -343,14 +412,50 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               onPressed: _confirmarMarcarEntregado,
             ),
 
-          // 4. Botón Cerrar (Creator o Admin)
-          if (_puedeCerrar(auth, estaCerrado))
-            IconButton(
-              icon: const Icon(Icons.lock_outline),
-              tooltip: 'Cerrar Reporte',
-              onPressed: _confirmarCerrarReporte,
+          if (_puedeCerrar(auth, estaCerrado) || _esAdmin(auth))
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'cerrar') _confirmarCerrarReporte();
+                if (value == 'archivar') _confirmarArchivar();
+                if (value == 'eliminar') _confirmarEliminar();
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                if (!estaCerrado)
+                  const PopupMenuItem<String>(
+                    value: 'cerrar',
+                    child: Row(
+                      children: [
+                        Icon(Icons.lock_outline, color: Colors.orange),
+                        SizedBox(width: 8),
+                        Text('Cerrar Reporte'),
+                      ],
+                    ),
+                  ),
+                if (_esAdmin(auth)) ...[
+                  const PopupMenuDivider(),
+                  const PopupMenuItem<String>(
+                    value: 'archivar',
+                    child: Row(
+                      children: [
+                        Icon(Icons.archive_outlined, color: Colors.grey),
+                        SizedBox(width: 8),
+                        Text('Archivar'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'eliminar',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_forever, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Eliminar (Danger)'),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
             ),
-
           const SizedBox(width: 8),
         ],
       ),
@@ -358,7 +463,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Carrusel
             _buildCarruselImagenes(),
 
             Padding(
@@ -366,8 +470,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 2. Banner de Estado Cerrado
-                  if (estaCerrado) ...[
+                  if (estaCerrado || widget.objeto.estado == 'ARCHIVADO') ...[
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
@@ -379,11 +482,11 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.lock, color: Colors.grey.shade700),
+                          Icon(Icons.info_outline, color: Colors.grey.shade700),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Este reporte está cerrado o archivado.',
+                              'Este reporte está ${widget.objeto.estado?.toLowerCase()}.',
                               style: TextStyle(
                                 color: Colors.grey.shade800,
                                 fontWeight: FontWeight.bold,
@@ -395,10 +498,8 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                     ),
                   ],
 
-                  // 3. NUEVO: Banner de Match (Si existe vinculación)
                   _buildMatchInfo(context),
 
-                  // 4. Título y badges
                   Text(
                     widget.objeto.titulo,
                     style: const TextStyle(
@@ -431,7 +532,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // 5. Secciones de información
                   _buildSeccion(
                     icon: Icons.description_outlined,
                     titulo: 'Descripción',
@@ -451,6 +551,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                     titulo: 'Fecha de reporte',
                     contenido: _formatearFechaHora(),
                   ),
+
                   if (widget.objeto is ObjetoPerdido) ...[
                     const SizedBox(height: 20),
                     _buildSeccion(
@@ -472,10 +573,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 24),
-
-                  // 6. Contacto
                   _buildSeccionContacto(),
-
                   const SizedBox(height: 40),
                 ],
               ),
@@ -486,10 +584,8 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     );
   }
 
-  // --- WIDGET PARA VER LA VINCULACIÓN (MATCH) ---
   Widget _buildMatchInfo(BuildContext context) {
     if (widget.objeto is! ObjetoPerdido) return const SizedBox.shrink();
-
     final perdido = widget.objeto as ObjetoPerdido;
     if (perdido.idObjetoVinculado == null) return const SizedBox.shrink();
 
@@ -509,14 +605,12 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetalleObjetoScreen(objeto: encontrado),
-              ),
-            );
-          },
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalleObjetoScreen(objeto: encontrado),
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -567,7 +661,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
     );
   }
 
-  // --- WIDGETS DE UI AUXILIARES ---
   Widget _buildCarruselImagenes() {
     if (widget.objeto.imagenes.isEmpty) {
       return Container(
@@ -602,11 +695,8 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
           PageView.builder(
             controller: _pageController,
             itemCount: widget.objeto.imagenes.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentImageIndex = index;
-              });
-            },
+            onPageChanged: (index) =>
+                setState(() => _currentImageIndex = index),
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () => _ampliarImagen(context, index),
@@ -648,49 +738,21 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                 ),
               ),
             ),
-          if (widget.objeto.imagenes.length > 1)
-            Positioned(
-              top: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  "${_currentImageIndex + 1} / ${widget.objeto.imagenes.length}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
           if (_currentImageIndex > 0)
             Positioned(
               left: 10,
               top: 0,
               bottom: 0,
               child: Center(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black26,
-                    shape: BoxShape.circle,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                    size: 30,
                   ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                    onPressed: () => _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
+                  onPressed: () => _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                   ),
                 ),
               ),
@@ -701,21 +763,15 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
               top: 0,
               bottom: 0,
               child: Center(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black26,
-                    shape: BoxShape.circle,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 30,
                   ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                    onPressed: () => _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
+                  onPressed: () => _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                   ),
                 ),
               ),
@@ -814,7 +870,6 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
   }
 
   Widget _buildSeccionContacto() {
-    final telefono = _obtenerTelefono();
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -850,7 +905,7 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
                 Icon(Icons.phone, size: 18, color: Colors.grey.shade600),
                 const SizedBox(width: 8),
                 Text(
-                  telefono,
+                  _obtenerTelefono(),
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -885,13 +940,11 @@ class _DetalleObjetoScreenState extends State<DetalleObjetoScreen> {
 class ImagenFullScreen extends StatelessWidget {
   final Uint8List imagen;
   final String titulo;
-
   const ImagenFullScreen({
     super.key,
     required this.imagen,
     required this.titulo,
   });
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

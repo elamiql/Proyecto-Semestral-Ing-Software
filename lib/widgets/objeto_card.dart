@@ -74,7 +74,6 @@ class ObjetoCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Miniatura arreglada
               _buildThumbnail(),
               const SizedBox(width: 16),
 
@@ -173,7 +172,6 @@ class ObjetoCard extends StatelessWidget {
     );
   }
 
-  // --- AQUÍ ESTÁ EL ARREGLO ---
   Widget _buildThumbnail() {
     return Container(
       width: 90,
@@ -184,10 +182,9 @@ class ObjetoCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        // Verificamos si la lista NO está vacía
         child: obj.imagenes.isNotEmpty
             ? Image.memory(
-                obj.imagenes.first, // Tomamos la PRIMERA imagen de la lista
+                obj.imagenes.first,
                 width: 90,
                 height: 90,
                 fit: BoxFit.cover,
