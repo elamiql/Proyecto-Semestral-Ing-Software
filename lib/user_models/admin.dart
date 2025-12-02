@@ -12,8 +12,4 @@ class Admin extends Usuario {
     required this.idAdmin,
     required this.oficina,
   });
-
-  void hacerMatch() {}
-  void archivar() {}
-  void eliminarObjeto() {}
 }

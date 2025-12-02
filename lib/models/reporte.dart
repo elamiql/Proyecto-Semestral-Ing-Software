@@ -2,13 +2,13 @@ import 'dart:typed_data';
 
 abstract class Reporte {
   String id;
-  String estado;
+  String? estado;
   String titulo;
   String ubicacion;
   String descripcion;
   DateTime fechaReporte;
   String horaDePerdida;
-  Uint8List? imagenBytes;
+  List<Uint8List> imagenes;
   String correoUsuario;
   String categoria;
 
@@ -21,7 +21,7 @@ abstract class Reporte {
     required this.horaDePerdida,
     required this.correoUsuario,
     required this.categoria,
-    this.imagenBytes,
-    this.estado = 'ABIERTO',
+    required this.imagenes,
+    this.estado = 'Activo',
   });
 }

@@ -12,7 +12,6 @@ class ObjetosProvider with ChangeNotifier {
   }
 
   void _cargarObjetosPorDefecto() {
-    // Objetos Perdidos
     _objetos.addAll([
       ObjetoPerdido(
         id: '1',
@@ -25,6 +24,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'juan.perez@udec.cl',
         categoria: 'Electrónicos',
         infoContacto: '+56 9 8765 4321',
+        imagenes: [],
       ),
       ObjetoPerdido(
         id: '2',
@@ -37,6 +37,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'maria.gonzalez@udec.cl',
         categoria: 'Documentos',
         infoContacto: 'maria.gonzalez@udec.cl',
+        imagenes: [],
       ),
       ObjetoPerdido(
         id: '3',
@@ -49,6 +50,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'pedro.soto@udec.cl',
         categoria: 'Llaves',
         infoContacto: '+56 9 7654 3210',
+        imagenes: [],
       ),
       ObjetoPerdido(
         id: '4',
@@ -61,6 +63,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'carlos.ruiz@udec.cl',
         categoria: 'Mochilas y Bolsos',
         infoContacto: '+56 9 6543 2109',
+        imagenes: [],
       ),
       ObjetoPerdido(
         id: '5',
@@ -73,10 +76,10 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'andrea.munoz@udec.cl',
         categoria: 'Libros y Útiles',
         infoContacto: 'andrea.munoz@udec.cl',
+        imagenes: [],
       ),
     ]);
 
-    // Objetos Encontrados
     _objetos.addAll([
       ObjetoEncontrado(
         id: '6',
@@ -89,6 +92,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'lucia.torres@udec.cl',
         categoria: 'Electrónicos',
         dondeReclamar: 'Conserjería Facultad de Ciencias',
+        imagenes: [],
       ),
       ObjetoEncontrado(
         id: '7',
@@ -101,6 +105,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'diego.vera@udec.cl',
         categoria: 'Ropa y Accesorios',
         dondeReclamar: 'Centro de alumnos Ingeniería',
+        imagenes: [],
       ),
       ObjetoEncontrado(
         id: '8',
@@ -112,6 +117,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'test@udec.cl',
         categoria: 'Tarjetas',
         dondeReclamar: 'Oficina de asuntos estudiantiles',
+        imagenes: [],
       ),
       ObjetoEncontrado(
         id: '9',
@@ -124,6 +130,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'test@udec.cl',
         categoria: 'Libros y Útiles',
         dondeReclamar: 'Biblioteca, mostrador de préstamos',
+        imagenes: [],
       ),
       ObjetoEncontrado(
         id: '10',
@@ -136,6 +143,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'test@udec.cl',
         categoria: 'Joyas',
         dondeReclamar: 'Conserjería Edificio Ingeniería',
+        imagenes: [],
       ),
       ObjetoEncontrado(
         id: '11',
@@ -148,6 +156,7 @@ class ObjetosProvider with ChangeNotifier {
         correoUsuario: 'test@udec.cl',
         categoria: 'Otros',
         dondeReclamar: 'Secretaría del departamento',
+        imagenes: [],
       ),
     ]);
   }
@@ -159,24 +168,22 @@ class ObjetosProvider with ChangeNotifier {
   }
 
   List<Reporte> filtrarObjetos({String? busqueda, String? categoria}) {
-    var resultados = _objetos;
-
-    if (categoria != null && categoria.isNotEmpty && categoria != 'Todas') {
-      resultados = resultados
-          .where((obj) => obj.categoria == categoria)
-          .toList();
-    }
+    var resultado = objetosVisibles;
 
     if (busqueda != null && busqueda.isNotEmpty) {
-      final busquedaLower = busqueda.toLowerCase();
-      resultados = resultados.where((obj) {
-        return obj.titulo.toLowerCase().contains(busquedaLower) ||
-            obj.descripcion.toLowerCase().contains(busquedaLower) ||
-            obj.ubicacion.toLowerCase().contains(busquedaLower);
+      resultado = resultado.where((obj) {
+        final query = busqueda.toLowerCase();
+        return obj.titulo.toLowerCase().contains(query) ||
+            obj.descripcion.toLowerCase().contains(query) ||
+            obj.ubicacion.toLowerCase().contains(query);
       }).toList();
     }
 
-    return resultados;
+    if (categoria != null && categoria != 'Todas') {
+      resultado = resultado.where((obj) => obj.categoria == categoria).toList();
+    }
+
+    return resultado;
   }
 
   void agregarObjeto(Reporte objeto) {
@@ -195,9 +202,6 @@ class ObjetosProvider with ChangeNotifier {
     if (index != -1) {
       _objetos[index] = objetoEditado;
       notifyListeners();
-    } else {
-      print("Error: No se encontró el objeto con id ${objetoEditado
-          .id} para editar.");
     }
   }
 
@@ -244,7 +248,6 @@ class ObjetosProvider with ChangeNotifier {
       final obj = _objetos[index];
       if (obj is ObjetoPerdido && obj.idObjetoVinculado != null) {
         cambiarEstado(obj.idObjetoVinculado!, 'ARCHIVADO');
-        print("Se ha archivado automáticamente el objeto vinculado: ${obj.idObjetoVinculado}");
       }
     }
   }

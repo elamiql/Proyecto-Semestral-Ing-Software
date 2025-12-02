@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_semestral_ing_software/theme/app_theme.dart';
 
 class ImageSelector extends StatelessWidget {
-  final Uint8List? imagenBytes;
+  final Uint8List? imagenes;
   final VoidCallback onTap;
   final String texto;
   final Color? iconColor;
 
   const ImageSelector({
     super.key,
-    required this.imagenBytes,
+    required this.imagenes,
     required this.onTap,
     this.texto = "Toca para agregar una foto",
     this.iconColor,
@@ -28,7 +28,7 @@ class ImageSelector extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade400),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: imagenBytes == null
+        child: imagenes == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -43,7 +43,7 @@ class ImageSelector extends StatelessWidget {
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(imagenBytes!, fit: BoxFit.cover),
+                child: Image.memory(imagenes!, fit: BoxFit.cover),
               ),
       ),
     );

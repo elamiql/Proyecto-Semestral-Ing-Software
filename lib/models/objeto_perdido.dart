@@ -14,7 +14,7 @@ class ObjetoPerdido extends Reporte {
     required super.categoria,
     required this.infoContacto,
     this.idObjetoVinculado,
-    super.imagenBytes,
-    super.estado = 'ABIERTO',
+    required super.imagenes,
+    super.estado = 'Activo',
   });
 }

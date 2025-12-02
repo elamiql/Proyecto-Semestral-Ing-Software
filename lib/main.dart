@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
 import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart';
@@ -25,6 +26,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('en', 'GB'),
+        Locale('es', 'ES'),
+      ],
       debugShowCheckedModeBanner: false,
       title: "Recüper",
       home: Consumer<AuthProvider>(

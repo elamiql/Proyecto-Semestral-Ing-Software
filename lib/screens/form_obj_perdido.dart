@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:typed_data'; // Importante para Uint8List
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +8,13 @@ import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart'
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
 import 'package:proyecto_semestral_ing_software/utils/categorias.dart';
 import 'package:proyecto_semestral_ing_software/theme/app_theme.dart';
-import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart';
+// import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart'; // Ya no lo usamos
 import 'package:proyecto_semestral_ing_software/utils/form_utils.dart';
 
 class FormObjPerdido extends StatefulWidget {
   final ObjetoPerdido? objetoEditar;
   const FormObjPerdido({super.key, this.objetoEditar});
+
   @override
   State<FormObjPerdido> createState() => _FormObjPerdidoState();
 }
@@ -25,9 +26,10 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
   final _contactoCtrl = TextEditingController();
   final _horaCtrl = TextEditingController();
 
-  Uint8List? _imagenBytes;
+  // 1. LISTA DE IMÁGENES
+  List<Uint8List> _imagenesSeleccionadas = [];
   String? _categoriaSel;
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker(); // No es necesario instanciarlo globalmente
 
   @override
   void initState() {
@@ -40,16 +42,32 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
       _contactoCtrl.text = obj.infoContacto;
       _horaCtrl.text = obj.horaDePerdida;
       _categoriaSel = obj.categoria;
-      _imagenBytes = obj.imagenBytes;
+
+      // 2. CORRECCIÓN: Cargar las imágenes del objeto existente
+      _imagenesSeleccionadas = List.from(obj.imagenes);
     }
   }
 
+  // 3. SELECCIÓN MÚLTIPLE
   Future<void> _pickImage() async {
-    final XFile? img = await _picker.pickImage(source: ImageSource.gallery);
-    if (img != null) {
-      final bytes = await img.readAsBytes();
-      setState(() => _imagenBytes = bytes);
+    final ImagePicker picker = ImagePicker();
+    final List<XFile> pickedFiles = await picker.pickMultiImage();
+
+    if (pickedFiles.isNotEmpty) {
+      for (var file in pickedFiles) {
+        final bytes = await file.readAsBytes();
+        setState(() {
+          _imagenesSeleccionadas.add(bytes);
+        });
+      }
     }
+  }
+
+  // 4. BORRAR IMAGEN
+  void _removerImagen(int index) {
+    setState(() {
+      _imagenesSeleccionadas.removeAt(index);
+    });
   }
 
   Future<void> _pickTime() async {
@@ -80,14 +98,16 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
       titulo: _tituloCtrl.text,
       ubicacion: _ubicacionCtrl.text,
       descripcion: _descCtrl.text,
-      fechaReporte:
-      esEdicion ? widget.objetoEditar!.fechaReporte : DateTime.now(),
+      fechaReporte: esEdicion
+          ? widget.objetoEditar!.fechaReporte
+          : DateTime.now(),
       horaDePerdida: _horaCtrl.text,
-      correoUsuario:
-      esEdicion ? widget.objetoEditar!.correoUsuario : (auth.correo ?? ''),
+      correoUsuario: esEdicion
+          ? widget.objetoEditar!.correoUsuario
+          : (auth.correo ?? ''),
       categoria: _categoriaSel!,
       infoContacto: _contactoCtrl.text,
-      imagenBytes: _imagenBytes,
+      imagenes: _imagenesSeleccionadas, // 5. PASAR LA LISTA
     );
 
     final provider = Provider.of<ObjetosProvider>(context, listen: false);
@@ -101,6 +121,72 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
     }
 
     Navigator.pop(context);
+  }
+
+  // 6. WIDGET DE GALERÍA (Reemplaza al ImageSelector)
+  Widget _buildGaleriaSeleccionada() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OutlinedButton.icon(
+          onPressed: _pickImage,
+          icon: const Icon(Icons.add_photo_alternate),
+          label: Text("Adjuntar Fotos (${_imagenesSeleccionadas.length})"),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            foregroundColor: Colors.red[700], // Color rojo para "Perdido"
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        if (_imagenesSeleccionadas.isNotEmpty)
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _imagenesSeleccionadas.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 12, top: 6),
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                        image: DecorationImage(
+                          image: MemoryImage(_imagenesSeleccionadas[index]),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: GestureDetector(
+                        onTap: () => _removerImagen(index),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: const Icon(
+                            Icons.close,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+      ],
+    );
   }
 
   @override
@@ -137,6 +223,7 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
                     .toList(),
                 onChanged: (v) => setState(() => _categoriaSel = v),
               ),
+
               const SizedBox(height: 16),
 
               TextField(
@@ -194,11 +281,9 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
               ),
               const SizedBox(height: 24),
 
-              ImageSelector(
-                imagenBytes: _imagenBytes,
-                onTap: _pickImage,
-                iconColor: Colors.red[700],
-              ),
+              // 7. AQUI USAMOS EL NUEVO WIDGET DE GALERÍA
+              _buildGaleriaSeleccionada(),
+
               const SizedBox(height: 24),
 
               ElevatedButton(
@@ -214,7 +299,9 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
                 child: Text(
                   esEdicion ? "GUARDAR CAMBIOS" : "PUBLICAR PÉRDIDA",
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

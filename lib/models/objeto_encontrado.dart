@@ -1,3 +1,5 @@
+import "dart:typed_data";
+
 import "package:proyecto_semestral_ing_software/models/reporte.dart";
 
 class ObjetoEncontrado extends Reporte {
@@ -12,7 +14,9 @@ class ObjetoEncontrado extends Reporte {
     required super.correoUsuario,
     required super.categoria,
     required this.dondeReclamar,
-    super.imagenBytes,
-    super.estado = 'ABIERTO',
+    required super.imagenes,
+    super.estado = 'Activo',
   });
+
+  List<Uint8List>? get imagenesSeleccionadas => imagenes;
 }
