@@ -12,6 +12,6 @@ En este sprint se trabajó en las funcionalidades generales de la plataforma, in
 
 Visión Sprint 2 
 
-En este sprint se trabajó en dos objetivos principales.
-El primero consistió en mejorar el apartado visual de la aplicación para ofrecer una experiencia más clara, moderna y alineada con las necesidades del cliente.
-El segundo objetivo fue completar las funcionalidades de la plataforma, lo que incluyó la creación de dos interfaces diferenciadas para separar los roles de administrador y usuario general. Además, se implementó un sistema de inicio de sesión que refuerza la seguridad permitiendo el acceso únicamente a usuarios con correo institucional UdeC.
+En este sprint se trabajó en completar las funcionalidades de la plataforma, lo que incluyó la creación de dos interfaces diferenciadas para separar los roles de administrador y usuario general. Además, se implementó un sistema de inicio de sesión que refuerza la seguridad, permitiendo el acceso únicamente a usuarios con correo institucional UdeC.
+
+También se incorporaron nuevas funcionalidades, como una barra de búsqueda para facilitar la localización de reportes, filtros para optimizar la navegación según distintos criterios y un perfil de usuario que permite personalizar la experiencia y gestionar información propia dentro de la plataforma.
