@@ -7,7 +7,6 @@ import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart'
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
 import 'package:proyecto_semestral_ing_software/utils/categorias.dart';
 import 'package:proyecto_semestral_ing_software/theme/app_theme.dart';
-// import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart'; // YA NO LO NECESITAMOS SI USAMOS EL MANUAL
 import 'package:proyecto_semestral_ing_software/utils/form_utils.dart';
 
 class FormObjEncontrado extends StatefulWidget {
@@ -24,10 +23,8 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
   final _dondeReclamarCtrl = TextEditingController();
   final _horaCtrl = TextEditingController();
 
-  // CORRECCIÓN 1: Inicializar lista vacía, no nula
   List<Uint8List> _imagenesSeleccionadas = [];
   String? _categoriaSel;
-  // final ImagePicker _picker = ImagePicker(); // No es necesario instanciarlo aquí arriba
 
   @override
   void initState() {
@@ -41,7 +38,6 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
       _horaCtrl.text = obj.horaDePerdida;
       _categoriaSel = obj.categoria;
 
-      // CORRECCIÓN 2: Usar el nombre correcto del modelo 'imagenes' y crear una copia
       _imagenesSeleccionadas = List.from(obj.imagenes);
     }
   }
@@ -105,7 +101,7 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
           : (auth.correo ?? ''),
       categoria: _categoriaSel!,
       dondeReclamar: _dondeReclamarCtrl.text,
-      imagenes: _imagenesSeleccionadas, // Pasamos la lista
+      imagenes: _imagenesSeleccionadas,
     );
 
     final provider = Provider.of<ObjetosProvider>(context, listen: false);
@@ -121,12 +117,10 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
     Navigator.pop(context);
   }
 
-  // WIDGET MANUAL DE GALERÍA (Para asegurar que funcione el borrar)
   Widget _buildGaleriaSeleccionada() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Botón para agregar
         OutlinedButton.icon(
           onPressed: _pickImage,
           icon: const Icon(Icons.add_photo_alternate),
@@ -137,7 +131,6 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
         ),
         const SizedBox(height: 12),
 
-        // Lista horizontal de fotos
         if (_imagenesSeleccionadas.isNotEmpty)
           SizedBox(
             height: 100,
@@ -274,7 +267,6 @@ class _FormObjEncontradoState extends State<FormObjEncontrado> {
               ),
               const SizedBox(height: 24),
 
-              // CORRECCIÓN 3: Usamos el widget local para manejar borrado
               _buildGaleriaSeleccionada(),
 
               const SizedBox(height: 24),

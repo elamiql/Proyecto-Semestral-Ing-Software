@@ -1,4 +1,3 @@
-import 'dart:typed_data'; // Importante para Uint8List
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:proyecto_semestral_ing_software/providers/objetos_provider.dart'
 import 'package:proyecto_semestral_ing_software/providers/auth_provider.dart';
 import 'package:proyecto_semestral_ing_software/utils/categorias.dart';
 import 'package:proyecto_semestral_ing_software/theme/app_theme.dart';
-// import 'package:proyecto_semestral_ing_software/widgets/image_selector.dart'; // Ya no lo usamos
 import 'package:proyecto_semestral_ing_software/utils/form_utils.dart';
 
 class FormObjPerdido extends StatefulWidget {
@@ -26,10 +24,8 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
   final _contactoCtrl = TextEditingController();
   final _horaCtrl = TextEditingController();
 
-  // 1. LISTA DE IMÁGENES
   List<Uint8List> _imagenesSeleccionadas = [];
   String? _categoriaSel;
-  // final ImagePicker _picker = ImagePicker(); // No es necesario instanciarlo globalmente
 
   @override
   void initState() {
@@ -43,12 +39,10 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
       _horaCtrl.text = obj.horaDePerdida;
       _categoriaSel = obj.categoria;
 
-      // 2. CORRECCIÓN: Cargar las imágenes del objeto existente
       _imagenesSeleccionadas = List.from(obj.imagenes);
     }
   }
 
-  // 3. SELECCIÓN MÚLTIPLE
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final List<XFile> pickedFiles = await picker.pickMultiImage();
@@ -63,7 +57,6 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
     }
   }
 
-  // 4. BORRAR IMAGEN
   void _removerImagen(int index) {
     setState(() {
       _imagenesSeleccionadas.removeAt(index);
@@ -107,7 +100,7 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
           : (auth.correo ?? ''),
       categoria: _categoriaSel!,
       infoContacto: _contactoCtrl.text,
-      imagenes: _imagenesSeleccionadas, // 5. PASAR LA LISTA
+      imagenes: _imagenesSeleccionadas,
     );
 
     final provider = Provider.of<ObjetosProvider>(context, listen: false);
@@ -123,7 +116,6 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
     Navigator.pop(context);
   }
 
-  // 6. WIDGET DE GALERÍA (Reemplaza al ImageSelector)
   Widget _buildGaleriaSeleccionada() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +126,7 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
           label: Text("Adjuntar Fotos (${_imagenesSeleccionadas.length})"),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            foregroundColor: Colors.red[700], // Color rojo para "Perdido"
+            foregroundColor: Colors.red[700]
           ),
         ),
         const SizedBox(height: 12),
@@ -281,7 +273,6 @@ class _FormObjPerdidoState extends State<FormObjPerdido> {
               ),
               const SizedBox(height: 24),
 
-              // 7. AQUI USAMOS EL NUEVO WIDGET DE GALERÍA
               _buildGaleriaSeleccionada(),
 
               const SizedBox(height: 24),

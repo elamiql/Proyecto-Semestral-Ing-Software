@@ -79,7 +79,6 @@ class _HomePageState extends State<HomePage> {
     final auth = Provider.of<AuthProvider>(context);
     final objetosProvider = Provider.of<ObjetosProvider>(context);
 
-    // Obtenemos los últimos 5 para mostrar, invirtiendo la lista para ver los nuevos primero
     final ultimosObjetos = objetosProvider.objetosVisibles.reversed
         .take(5)
         .toList();
@@ -89,14 +88,13 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Fondo un poco más claro que blanco
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: const Color.fromARGB(255, 0, 57, 102),
         title: Row(
           children: [
-            // Icono de la app o Logo pequeño
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -144,7 +142,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. SECCIÓN DE BIENVENIDA (Header)
             Container(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
               decoration: const BoxDecoration(
@@ -179,17 +176,14 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // 2. TARJETAS DE ACCIÓN (Transformado para subir un poco sobre el header)
             Transform.translate(
               offset: const Offset(0, -20),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
-                    // Fila de Botones Principales
                     Row(
                       children: [
-                        // Botón: PERDÍ ALGO
                         Expanded(
                           child: _buildActionCard(
                             context,
@@ -206,7 +200,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(width: 12),
 
-                        // Botón: VER OBJETOS (Catálogo)
                         Expanded(
                           child: _buildActionCard(
                             context,
@@ -224,7 +217,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
 
-                    // Botón de ADMIN (Solo visible si es admin)
                     if (auth.esAdmin) ...[
                       const SizedBox(height: 12),
                       _buildActionCard(
@@ -232,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                         title: "Reportar Hallazgo (Admin)",
                         icon: Icons.add_location_alt,
                         color: Colors.green.shade700,
-                        isFullWidth: true, // Ocupa todo el ancho
+                        isFullWidth: true,
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -246,7 +238,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // 3. SECCIÓN "ACTIVIDAD RECIENTE"
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
@@ -273,7 +264,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // 4. LISTA DE OBJETOS (Integrada verticalmente)
             ultimosObjetos.isEmpty
                 ? Container(
                     height: 150,
@@ -304,12 +294,11 @@ class _HomePageState extends State<HomePage> {
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     shrinkWrap:
-                        true, // Importante para que funcione dentro del SingleChildScrollView
+                        true,
                     physics:
-                        const NeverScrollableScrollPhysics(), // Desactiva scroll interno
+                        const NeverScrollableScrollPhysics(),
                     itemCount: ultimosObjetos.length,
                     itemBuilder: (context, index) {
-                      // Reutilizamos tu ObjetoCard, pero con GestureDetector para navegar
                       final obj = ultimosObjetos[index];
                       return GestureDetector(
                         onTap: () {
@@ -332,7 +321,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- WIDGET PARA LAS TARJETAS DE ACCIÓN ---
   Widget _buildActionCard(
     BuildContext context, {
     required String title,
@@ -348,7 +336,7 @@ class _HomePageState extends State<HomePage> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          height: 100, // Altura fija para uniformidad
+          height: 100,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -360,7 +348,6 @@ class _HomePageState extends State<HomePage> {
           ),
           child: isFullWidth
               ? Row(
-                  // Diseño horizontal para tarjeta ancha
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(icon, size: 32, color: Colors.white),
@@ -376,7 +363,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 )
               : Column(
-                  // Diseño vertical para tarjetas cuadradas
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(icon, size: 32, color: Colors.white),

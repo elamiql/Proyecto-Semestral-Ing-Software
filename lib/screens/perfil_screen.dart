@@ -117,7 +117,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
       auth.correo ?? '',
     );
 
-    // Separar reportes por tipo si es admin
     final reportesPerdidos = misReportes
         .where((r) => r is ObjetoPerdido)
         .toList();
@@ -137,7 +136,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // Header con gradient
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -153,7 +151,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        // Avatar
                         Container(
                           width: 100,
                           height: 100,
@@ -176,7 +173,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Nombre
                         Text(
                           nombre ?? 'Sin nombre',
                           style: const TextStyle(
@@ -187,7 +183,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 8),
 
-                        // Badge de rol
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -226,13 +221,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     ),
                   ),
 
-                  // Contenido principal
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Sección: Mis Datos
                         _buildSeccionHeader(
                           icon: Icons.person_outline,
                           title: 'Mis Datos',
@@ -270,7 +263,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Sección: Mis Reportes
                         _buildSeccionHeader(
                           icon: Icons.list_alt,
                           title: 'Mis Reportes',
@@ -278,13 +270,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Si no hay reportes
                         if (misReportes.isEmpty)
                           _buildEstadoVacio()
-                        // Si hay reportes y es usuario normal
                         else if (!auth.esAdmin)
                           _buildListaReportes(reportesPerdidos, objetosProvider)
-                        // Si es admin, mostrar secciones separadas
                         else ...[
                           if (reportesPerdidos.isNotEmpty) ...[
                             Padding(
@@ -326,7 +315,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
                         const SizedBox(height: 32),
 
-                        // Botones de acción
                         _buildBotonAccion(
                           icon: Icons.edit_outlined,
                           label: 'Editar Perfil',
@@ -450,7 +438,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
           children: [
             ObjetoCard(obj: reporte),
 
-            // Barra de acciones
             Container(
               margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
               decoration: BoxDecoration(
@@ -499,7 +486,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                       ),
 
-                    // Botón Editar
                     TextButton.icon(
                       icon: Icon(
                         Icons.edit_outlined,
@@ -520,7 +506,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           : () => _navegarAEdicion(context, reporte),
                     ),
 
-                    // Botón Cerrar
                     TextButton.icon(
                       icon: Icon(
                         Icons.close,
